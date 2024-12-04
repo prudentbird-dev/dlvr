@@ -39,9 +39,13 @@ const swaggerOptions = {
         url: `http://localhost:${PORT}`,
         description: "Development Server",
       },
+      {
+        url: "https://dlvr.koyeb.app",
+        description: "Production Server",
+      },
     ],
   },
-  apis: ["./src/routes/*.ts"],
+  apis: ["./src/routes/*.ts", "./src/models/*.ts"],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

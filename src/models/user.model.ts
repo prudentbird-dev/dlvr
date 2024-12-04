@@ -3,6 +3,39 @@ import bcrypt from "bcryptjs";
 import { IUser, IUserModel } from "../types/user.type";
 import toJSON from "./plugins/toJSON.plugin";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: Unique identifier for the user
+ *         email:
+ *           type: string
+ *           description: Email address of the user
+ *         role:
+ *           type: string
+ *           enum: [user, rider, admin]
+ *           description: Role of the user
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: The timestamp when the user was created
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: The timestamp when the user was last updated
+ *       security:
+ *         - bearerAuth: []
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 const userSchema = new Schema<IUser>(
   {
     email: {

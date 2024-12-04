@@ -3,14 +3,13 @@ import { authController } from "../controllers/auth.controller";
 import { userController } from "../controllers/user.controller";
 import { authGuard, authorize } from "../middlewares/authGuard.middleware";
 
-const router = Router();
-
 /**
  * @swagger
  * tags:
  *   name: Auth
  *   description: Authentication endpoints
  */
+const router = Router();
 
 /**
  * @swagger
@@ -41,8 +40,57 @@ const router = Router();
  *     responses:
  *       201:
  *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                       enum: [user, rider, admin]
+ *                     location:
+ *                       type: object
+ *                       properties:
+ *                         type:
+ *                           type: string
+ *                           example: Point
+ *                         coordinates:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                           example: [0, 0]
+ *                 rider:
+ *                   type: object
+ *                   properties:
+ *                     userId:
+ *                       type: string
+ *                     location:
+ *                       type: object
+ *                       properties:
+ *                         type:
+ *                           type: string
+ *                           example: Point
+ *                         coordinates:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                           example: [0, 0]
  *       400:
  *         description: Bad request
+ *       500:
+ *         description: Internal server error
  */
 router.post("/register", authController.register);
 
@@ -69,8 +117,49 @@ router.post("/register", authController.register);
  *     responses:
  *       200:
  *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 accessToken:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                       enum: [user, rider, admin]
+ *                 rider:
+ *                   type: object
+ *                   description: Only present if the user is a rider
+ *                   properties:
+ *                     userId:
+ *                       type: string
+ *                     location:
+ *                       type: object
+ *                       properties:
+ *                         type:
+ *                           type: string
+ *                           example: Point
+ *                         coordinates:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                           example: [0, 0]
  *       400:
- *         description: Invalid login credentials
+ *         description: Bad request - Invalid email or password, or email and password are required
+ *       404:
+ *         description: Not found - Rider information not found (only for rider logins)
+ *       500:
+ *         description: Internal server error
  */
 router.post("/login", authController.login);
 
@@ -85,8 +174,49 @@ router.post("/login", authController.login);
  *     responses:
  *       200:
  *         description: User profile retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                       enum: [admin, user, rider]
+ *                 rider:
+ *                   type: object
+ *                   description: Only present if the user is a rider
+ *                   properties:
+ *                     userId:
+ *                       type: string
+ *                     location:
+ *                       type: object
+ *                       properties:
+ *                         type:
+ *                           type: string
+ *                           example: Point
+ *                         coordinates:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                           example: [0, 0]
  *       401:
- *         description: Unauthorized
+ *         description: Unauthorized - Access denied (User not authenticated)
+ *       403:
+ *         description: Forbidden - User does not have required role
+ *       404:
+ *         description: Not Found - Rider information not found (only for rider profiles)
+ *       500:
+ *         description: Internal Server Error - An unexpected error occurred
  */
 router.get(
   "/profile",

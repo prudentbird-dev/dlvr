@@ -2,14 +2,13 @@ import express from "express";
 import { userController } from "../controllers/user.controller";
 import { authGuard, authorize } from "../middlewares/authGuard.middleware";
 
-const router = express.Router();
-
 /**
  * @swagger
  * tags:
  *   name: Users
  *   description: User management endpoints
  */
+const router = express.Router();
 
 /**
  * @swagger
@@ -22,6 +21,18 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: List of users retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
  *       401:
  *         description: Unauthorized
  *       403:
@@ -40,10 +51,21 @@ router.get("/", authGuard, authorize("admin"), userController.getUsers);
  *     responses:
  *       200:
  *         description: User retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *                 rider:
+ *                   type: object
+ *                   description: Additional rider information (only for rider role)
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden
  *       404:
  *         description: User not found
  */
@@ -71,6 +93,19 @@ router.get(
  *     responses:
  *       200:
  *         description: User retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *                 rider:
+ *                   type: object
+ *                   description: Additional rider information (only for rider role)
  *       401:
  *         description: Unauthorized
  *       403:
@@ -110,12 +145,20 @@ router.get(
  *     responses:
  *       200:
  *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Bad request
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden
  *       404:
  *         description: User not found
  */
@@ -157,6 +200,16 @@ router.put(
  *     responses:
  *       200:
  *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Bad request
  *       401:
@@ -186,8 +239,6 @@ router.put(
  *         description: User deleted successfully
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden
  *       404:
  *         description: User not found
  */

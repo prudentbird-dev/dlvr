@@ -2,14 +2,13 @@ import express from "express";
 import { riderController } from "../controllers/rider.controller";
 import { authGuard, authorize } from "../middlewares/authGuard.middleware";
 
-const router = express.Router();
-
 /**
  * @swagger
  * tags:
  *   name: Riders
  *   description: Rider management endpoints
  */
+const router = express.Router();
 
 /**
  * @swagger
@@ -22,10 +21,24 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: List of riders retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 riders:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Rider'
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
+ *       500:
+ *         description: Internal Server Error
  */
 router.get(
   "/",
@@ -45,12 +58,26 @@ router.get(
  *     responses:
  *       200:
  *         description: Rider retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *                 rider:
+ *                   $ref: '#/components/schemas/Rider'
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
  *       404:
  *         description: Rider not found
+ *       500:
+ *         description: Internal Server Error
  */
 router.get("/me", authGuard, authorize("rider"), riderController.getRider);
 
@@ -71,12 +98,26 @@ router.get("/me", authGuard, authorize("rider"), riderController.getRider);
  *     responses:
  *       200:
  *         description: Rider retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 rider:
+ *                   $ref: '#/components/schemas/Rider'
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       401:
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
  *       404:
  *         description: Rider not found
+ *       500:
+ *         description: Internal Server Error
  */
 router.get(
   "/:id",
@@ -98,25 +139,20 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               location:
- *                 type: object
- *                 properties:
- *                   type:
- *                     type: string
- *                     enum: [Point]
- *                   coordinates:
- *                     type: array
- *                     items:
- *                       type: number
- *                     minItems: 2
- *                     maxItems: 2
- *               isAvailable:
- *                 type: boolean
+ *             $ref: '#/components/schemas/RiderUpdate'
  *     responses:
  *       200:
  *         description: Rider updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 rider:
+ *                   $ref: '#/components/schemas/Rider'
  *       400:
  *         description: Bad request
  *       401:
@@ -125,6 +161,8 @@ router.get(
  *         description: Forbidden
  *       404:
  *         description: Rider not found
+ *       500:
+ *         description: Internal Server Error
  */
 router.put("/me", authGuard, authorize("rider"), riderController.updateRider);
 
@@ -147,25 +185,20 @@ router.put("/me", authGuard, authorize("rider"), riderController.updateRider);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               location:
- *                 type: object
- *                 properties:
- *                   type:
- *                     type: string
- *                     enum: [Point]
- *                   coordinates:
- *                     type: array
- *                     items:
- *                       type: number
- *                     minItems: 2
- *                     maxItems: 2
- *               isAvailable:
- *                 type: boolean
+ *             $ref: '#/components/schemas/RiderUpdate'
  *     responses:
  *       200:
  *         description: Rider updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 rider:
+ *                   $ref: '#/components/schemas/Rider'
  *       400:
  *         description: Bad request
  *       401:
@@ -174,6 +207,8 @@ router.put("/me", authGuard, authorize("rider"), riderController.updateRider);
  *         description: Forbidden
  *       404:
  *         description: Rider not found
+ *       500:
+ *         description: Internal Server Error
  */
 router.put(
   "/:id",

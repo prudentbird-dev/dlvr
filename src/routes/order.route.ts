@@ -2,14 +2,13 @@ import express from "express";
 import { orderController } from "../controllers/order.controller";
 import { authGuard, authorize } from "../middlewares/authGuard.middleware";
 
-const router = express.Router();
-
 /**
  * @swagger
  * tags:
  *   name: Orders
  *   description: Order management endpoints
  */
+const router = express.Router();
 
 /**
  * @swagger
@@ -62,6 +61,8 @@ const router = express.Router();
  *         description: Unauthorized
  *       403:
  *         description: Forbidden
+ *       503:
+ *         description: Service Unavailable - Rider not available
  */
 router.post("/", authGuard, authorize("user"), orderController.createOrder);
 
@@ -154,6 +155,8 @@ router.get(
  *         description: Forbidden
  *       404:
  *         description: Order not found
+ *       500:
+ *         description: Internal Server Error
  */
 router.put(
   "/:id",
@@ -185,6 +188,8 @@ router.put(
  *         description: Forbidden
  *       404:
  *         description: Order not found
+ *       500:
+ *         description: Internal Server Error
  */
 router.delete(
   "/:id",
