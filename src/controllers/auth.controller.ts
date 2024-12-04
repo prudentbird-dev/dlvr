@@ -8,19 +8,18 @@ export const authController = {
     try {
       const { email, password, riderSecret, adminSecret } = req.body;
       const clientIp = req.ip || req.socket.remoteAddress;
-      const user = await userService.createUser(
+      const response = await userService.createUser(
         { email, password },
         riderSecret,
         adminSecret,
         clientIp,
       );
-      if (!user) {
+      if (!response) {
         throw new ApiError(httpStatus.BAD_REQUEST, "Error creating user");
       }
-      res.status(httpStatus.CREATED).json({ status: "success", user });
-    } catch (error) {
-      console.log(error);
 
+      res.status(httpStatus.CREATED).json({ status: "success", ...response });
+    } catch (error) {
       return next(
         error instanceof ApiError
           ? error
@@ -43,26 +42,13 @@ export const authController = {
         );
       }
 
-      const { user, accessToken } = await userService.authenticateUser(
-        email,
-        password,
-      );
-
-      if (!user || !accessToken) {
-        throw new ApiError(
-          httpStatus.UNAUTHORIZED,
-          "Invalid email or password",
-        );
-      }
+      const response = await userService.authenticateUser(email, password);
 
       res.status(httpStatus.OK).json({
         status: "success",
-        user,
-        accessToken,
+        ...response,
       });
     } catch (error) {
-      console.log(error);
-
       return next(
         error instanceof ApiError
           ? error

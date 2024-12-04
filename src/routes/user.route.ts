@@ -31,7 +31,7 @@ router.get("/", authGuard, authorize("admin"), userController.getUsers);
 
 /**
  * @swagger
- * /api/users:
+ * /api/users/me:
  *   get:
  *     summary: Get the profile of current user
  *     tags: [Users]
@@ -48,7 +48,7 @@ router.get("/", authGuard, authorize("admin"), userController.getUsers);
  *         description: User not found
  */
 router.get(
-  "/",
+  "/me",
   authGuard,
   authorize("admin", "user", "rider"),
   userController.getUser,
@@ -87,7 +87,7 @@ router.get(
 
 /**
  * @swagger
- * /api/users:
+ * /api/users/me:
  *   put:
  *     summary: Update the current authenticated user
  *     tags: [Users]
@@ -120,7 +120,7 @@ router.get(
  *         description: User not found
  */
 router.put(
-  "/",
+  "/me",
   authGuard,
   authorize("admin", "user", "rider"),
   userController.updateUser,
@@ -175,7 +175,7 @@ router.put(
 
 /**
  * @swagger
- * /api/users:
+ * /api/users/me:
  *   delete:
  *     summary: Delete the current authenticated user
  *     tags: [Users]
@@ -192,7 +192,7 @@ router.put(
  *         description: User not found
  */
 router.delete(
-  "/",
+  "/me",
   authGuard,
   authorize("admin", "rider", "user"),
   userController.deleteUser,

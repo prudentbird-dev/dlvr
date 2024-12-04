@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
-import { IUser } from "../types/user.type";
+import { IUser, IUserModel } from "../types/user.type";
 import toJSON from "./plugins/toJSON.plugin";
 
 const userSchema = new Schema<IUser>(
@@ -24,11 +24,9 @@ const userSchema = new Schema<IUser>(
       type: {
         type: String,
         enum: ["Point"],
-        required: true,
       },
       coordinates: {
         type: [Number],
-        required: true,
       },
     },
   },
@@ -51,4 +49,4 @@ userSchema.methods.comparePassword = async function (
   return bcrypt.compare(userPassword, this.password);
 };
 
-export default mongoose.model<IUser>("User", userSchema);
+export default mongoose.model<IUser, IUserModel>("User", userSchema);

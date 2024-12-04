@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Model } from "mongoose";
 
 export interface IUser extends Document {
   email: string;
@@ -8,5 +8,10 @@ export interface IUser extends Document {
     type: string;
     coordinates: number[];
   };
-  comparePassword(password: string): Promise<boolean>;
 }
+
+export interface IUserMethods {
+  comparePassword(userPassword: string): Promise<boolean>;
+}
+
+export type IUserModel = Model<IUser, object, IUserMethods>;

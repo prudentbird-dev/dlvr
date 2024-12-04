@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Express } from "express";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
@@ -8,7 +8,7 @@ import errorHandler from "./middlewares/errorHandler.middleware";
 
 dotenv.config();
 
-const app = express();
+export const app: Express = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -41,7 +41,9 @@ app.use(errorHandler);
 (async () => {
   try {
     // Initialize the database
-    await initializeDatabase();
+    if (process.env.NODE_ENV !== "test") {
+      await initializeDatabase();
+    }
 
     // Start the server
     app.listen(PORT, () => {

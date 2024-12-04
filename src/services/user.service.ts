@@ -12,48 +12,57 @@ export const userService = {
     riderSecret?: string,
     adminSecret?: string,
     clientIp?: string,
-  ): Promise<IUser | { user: IUser; rider: IRider }> {
-    let role: "user" | "rider" | "admin" = "user";
+  ): Promise<{ message?: string; user: IUser; rider?: IRider }> {
+    const role: "user" | "rider" | "admin" =
+      adminSecret === process.env.ADMIN_SECRET
+        ? "admin"
+        : riderSecret === process.env.RIDER_SECRET
+          ? "rider"
+          : "user";
 
-    if (adminSecret && adminSecret === process.env.ADMIN_SECRET) {
-      role = "admin";
+    // Fetch location data
+    const location = { type: "Point", coordinates: [0, 0] };
+    let message = "User created successfully.";
+
+    try {
+      if (clientIp) {
+        const response = await fetch(
+          `http://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=${clientIp}&aqi=no`,
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          location.coordinates = [data.location.lat, data.location.lon];
+        } else {
+          message =
+            "User created successfully, but location data could not be fetched. Please update location manually.";
+        }
+      }
+    } catch {
+      message =
+        "User created successfully, but an error occurred while fetching location data. Please update location manually.";
     }
 
-    if (riderSecret && riderSecret === process.env.RIDER_SECRET) {
-      role = "rider";
+    if (role !== "rider") {
+      userData.location = location;
     }
-
-    const response = await fetch(
-      `http://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=${clientIp}&aqi=no`,
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-
-    userData.location = {
-      type: "Point",
-      coordinates: [data.location.lat, data.location.lon],
-    };
-
     const user = new User({ ...userData, role });
     await user.save();
 
+    // Additional logic for riders
     if (role === "rider") {
       const riderData: Partial<IRider> = {
-        userId: await user.id,
-        location: {
-          type: "Point",
-          coordinates: [data.location.lat, data.location.lon],
-        },
+        userId: user.id,
+        location,
       };
 
       const rider = new Rider(riderData);
       await rider.save();
 
-      return { user, rider };
+      return { user, rider, message };
     }
-    return user;
+
+    return { user, message };
   },
 
   async getUsers(): Promise<IUser[]> {
@@ -72,6 +81,8 @@ export const userService = {
   },
 
   async deleteUser(id: string): Promise<IUser | null> {
+    await Rider.findOneAndDelete({ userId: id });
+
     return User.findByIdAndDelete(id);
   },
 
@@ -79,7 +90,7 @@ export const userService = {
     email: string,
     password: string,
   ): Promise<{ user: IUser; accessToken: string }> {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email });
 
     if (!user || !(await user.comparePassword(password))) {
       throw new ApiError(httpStatus.BAD_REQUEST, "Invalid email or password");
@@ -92,6 +103,27 @@ export const userService = {
     };
 
     const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string);
-    return { user, accessToken };
+
+    const response: {
+      accessToken: string;
+      user: IUser;
+      rider?: IRider;
+    } = {
+      accessToken,
+      user,
+    };
+
+    if (user.role === "rider") {
+      const rider = await Rider.findOne({ userId: user.id });
+      if (!rider) {
+        throw new ApiError(
+          httpStatus.NOT_FOUND,
+          "Rider information not found.",
+        );
+      }
+      response.rider = rider;
+    }
+
+    return response;
   },
 };

@@ -17,9 +17,37 @@ export const orderController = {
         );
       }
 
-      const { pickupLocation, dropoffLocation } = req.body;
-      const nearestRider =
-        await riderService.getNearestAvailableRider(pickupLocation);
+      const {
+        pickupLocation,
+        dropoffLocation,
+      }: {
+        pickupLocation: {
+          type: string;
+          coordinates: number[];
+        };
+        dropoffLocation: {
+          type: string;
+          coordinates: number[];
+        };
+      } = req.body;
+
+      if (
+        !pickupLocation ||
+        !Array.isArray(pickupLocation.coordinates) ||
+        pickupLocation.coordinates.length !== 2 ||
+        !dropoffLocation ||
+        !Array.isArray(dropoffLocation.coordinates) ||
+        dropoffLocation.coordinates.length !== 2
+      ) {
+        throw new ApiError(
+          httpStatus.BAD_REQUEST,
+          "Invalid location data provided.",
+        );
+      }
+
+      const nearestRider = await riderService.getNearestAvailableRider(
+        pickupLocation.coordinates,
+      );
 
       if (!nearestRider) {
         throw new ApiError(
@@ -32,11 +60,11 @@ export const orderController = {
         userId: req.user.id,
         pickupLocation: {
           type: "Point",
-          coordinates: pickupLocation,
+          coordinates: pickupLocation.coordinates,
         },
         dropoffLocation: {
           type: "Point",
-          coordinates: dropoffLocation,
+          coordinates: dropoffLocation.coordinates,
         },
         riderId: nearestRider.id,
         status: nearestRider ? "assigned" : "pending",
