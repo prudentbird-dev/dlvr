@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "cross-env NODE_ENV=test jest",
-    "start": "cross-env NODE_ENV=production node dist/app.js",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
     "dev": "cross-env NODE_ENV=development ts-node-dev --files src/app.ts",
     "typecheck": "tsc --noEmit && echo Type Checks successfuly completed!",
     "lint": "eslint \"src/**/*.{ts,js}\" --fix && echo Lint Checks successfully completed!",
