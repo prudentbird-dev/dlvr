@@ -38,22 +38,32 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", apiRoutes);
 app.use(errorHandler);
 
-(async () => {
+export const startServer = async () => {
   try {
-    // Initialize the database
     if (process.env.NODE_ENV !== "test") {
       await initializeDatabase();
     }
-
-    // Start the server
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+    
+    const server = app.listen(PORT, () => {
       console.log(
-        `API Documentation available at http://localhost:${PORT}/api/docs`,
+        `Server is running on ${
+          process.env.NODE_ENV === "development"
+            ? `http://localhost:${PORT}`
+            : `port ${PORT}`
+        } in ${process.env.NODE_ENV} mode`,
+      );
+      console.log(
+        `API Documentation available at ${
+          process.env.NODE_ENV === "development"
+            ? `http://localhost:${PORT}`
+            : ""
+        }/api/docs`,
       );
     });
+
+    return server;
   } catch (error) {
     console.error("Error initializing server:", error);
     process.exit(1);
   }
-})();
+};

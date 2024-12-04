@@ -1,28 +1,30 @@
+import http from "http";
 import request from "supertest";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import { app } from "../app";
+import { startServer } from "../app";
 import User from "../models/user.model";
 import Rider from "../models/rider.model";
 import Order from "../models/order.model";
 
+let app: http.Server;
 let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
+  app = await startServer();
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
   await mongoose.connect(mongoUri);
-});
 
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
-
-beforeAll(async () => {
   await User.deleteMany({});
   await Rider.deleteMany({});
   await Order.deleteMany({});
+});
+
+afterAll(async () => {
+  if (app) app.close();
+  await mongoose.disconnect();
+  await mongoServer.stop();
 });
 
 describe("DLVR Logistics API", () => {
