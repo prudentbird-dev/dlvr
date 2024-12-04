@@ -77,7 +77,7 @@ export const userService = {
     const user = await User.findOne({ email });
 
     if (!user || !(await user.comparePassword(password))) {
-      throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid email or password");
+      throw new ApiError(httpStatus.BAD_REQUEST, "Invalid email or password");
     }
 
     const payload: JwtPayload = {

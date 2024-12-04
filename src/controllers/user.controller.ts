@@ -104,15 +104,7 @@ export const userController = {
 
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.user) {
-        return next(
-          new ApiError(
-            httpStatus.UNAUTHORIZED,
-            "Access denied: User not authenticated",
-          ),
-        );
-      }
-      const user = await userService.deleteUser(req.user.id);
+      const user = await userService.deleteUser(req.params.id);
       if (!user) {
         throw new ApiError(
           httpStatus.INTERNAL_SERVER_ERROR,
