@@ -54,5 +54,6 @@
     "setupFilesAfterEnv": [
       "./src/tests/setup.ts"
     ]
-  }
+  },
+  "packageManager": "pnpm@9.14.4"
 }
