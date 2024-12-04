@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3000;
 
-app.use("/", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.status(httpStatus.OK).send({
     message:
       "Welcome to the DLVR API! Use the appropriate endpoints to access the resources.",

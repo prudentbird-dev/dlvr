@@ -10,7 +10,7 @@ const router = Router();
 
 const PORT = process.env.PORT || 3000;
 
-router.use("/", (req: Request, res: Response) => {
+router.get("/", (req: Request, res: Response) => {
   res.status(httpStatus.OK).send({
     message:
       "Welcome to the DLVR API! Use the appropriate endpoints to access the resources.",
