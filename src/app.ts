@@ -1,4 +1,6 @@
 import express, { Express } from "express";
+import { Request, Response } from "express";
+import httpStatus from "http-status";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
@@ -13,6 +15,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3000;
+
+app.use("/", (req: Request, res: Response) => {
+  res.status(httpStatus.OK).send({
+    message:
+      "Welcome to the DLVR API! Use the appropriate endpoints to access the resources.",
+    documentation: `API Documentation available at ${
+      process.env.NODE_ENV === "development" ? `http://localhost:${PORT}` : ""
+    }/api/docs`,
+  });
+});
 
 const swaggerOptions = {
   definition: {
