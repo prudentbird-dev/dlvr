@@ -23,18 +23,23 @@ export const userService = {
       role = "rider";
     }
 
+    const response = await fetch(
+      `http://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=${clientIp}&aqi=no`,
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+
+    userData.location = {
+      type: "Point",
+      coordinates: [data.location.lat, data.location.lon],
+    };
+
     const user = new User({ ...userData, role });
     await user.save();
 
     if (role === "rider") {
-      const response = await fetch(
-        `http://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=${clientIp}&aqi=no`,
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-
       const riderData: Partial<IRider> = {
         userId: await user.id,
         location: {

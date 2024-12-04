@@ -29,7 +29,7 @@ export const userController = {
     }
   },
 
-  async getUserById(req: Request, res: Response, next: NextFunction) {
+  async getUser(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.user) {
         return next(
@@ -59,6 +59,45 @@ export const userController = {
         }
         response.rider = rider;
       }
+      res.status(httpStatus.OK).json(response);
+    } catch (error) {
+      return next(
+        error instanceof ApiError
+          ? error
+          : new ApiError(
+              httpStatus.INTERNAL_SERVER_ERROR,
+              "An unexpected error occurred",
+            ),
+      );
+    }
+  },
+
+  async getUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await userService.getUserById(req.params.id);
+      if (!user) {
+        return next(new ApiError(httpStatus.NOT_FOUND, "User not found"));
+      }
+
+      const response: {
+        status: string;
+        user: IUser;
+        rider?: IRider;
+      } = {
+        status: "success",
+        user,
+      };
+
+      if (user.role === "rider") {
+        const rider = await Rider.findOne({ userId: user.id });
+        if (!rider) {
+          return next(
+            new ApiError(httpStatus.NOT_FOUND, "Rider information not found."),
+          );
+        }
+        response.rider = rider;
+      }
+
       res.status(httpStatus.OK).json(response);
     } catch (error) {
       return next(
@@ -102,6 +141,25 @@ export const userController = {
     }
   },
 
+  async updateUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await userService.updateUser(req.params.id, req.body);
+      if (!user) {
+        return next(new ApiError(httpStatus.NOT_FOUND, "User not found"));
+      }
+      res.status(httpStatus.OK).json({ status: "success", user });
+    } catch (error) {
+      return next(
+        error instanceof ApiError
+          ? error
+          : new ApiError(
+              httpStatus.INTERNAL_SERVER_ERROR,
+              "An unexpected error occurred",
+            ),
+      );
+    }
+  },
+
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await userService.deleteUser(req.params.id);
@@ -110,6 +168,25 @@ export const userController = {
           httpStatus.INTERNAL_SERVER_ERROR,
           "Something went wrong while deleting user",
         );
+      }
+      res.status(httpStatus.NO_CONTENT).send();
+    } catch (error) {
+      return next(
+        error instanceof ApiError
+          ? error
+          : new ApiError(
+              httpStatus.INTERNAL_SERVER_ERROR,
+              "An unexpected error occurred",
+            ),
+      );
+    }
+  },
+
+  async deleteUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await userService.deleteUser(req.params.id);
+      if (!user) {
+        return next(new ApiError(httpStatus.NOT_FOUND, "User not found"));
       }
       res.status(httpStatus.NO_CONTENT).send();
     } catch (error) {

@@ -20,6 +20,17 @@ const userSchema = new Schema<IUser>(
       private: true,
     },
     role: { type: String, enum: ["user", "rider", "admin"], default: "user" },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
+    },
   },
   {
     timestamps: true,

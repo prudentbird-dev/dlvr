@@ -7,6 +7,13 @@ const router = Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Authentication endpoints
+ */
+
+/**
+ * @swagger
  * /api/auth/register:
  *   post:
  *     summary: Register a new user
@@ -71,7 +78,7 @@ router.post("/login", authController.login);
  * @swagger
  * /api/auth/profile:
  *   get:
- *     summary: Get user profile
+ *     summary: Get authenticated user profile
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -85,7 +92,7 @@ router.get(
   "/profile",
   authGuard,
   authorize("admin", "user", "rider"),
-  userController.getUserById,
+  userController.getUser,
 );
 
 export default router;
