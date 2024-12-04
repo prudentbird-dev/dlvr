@@ -43,7 +43,7 @@ export const startServer = async () => {
     if (process.env.NODE_ENV !== "test") {
       await initializeDatabase();
     }
-    
+
     const server = app.listen(PORT, () => {
       console.log(
         `Server is running on ${
