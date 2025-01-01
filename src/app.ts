@@ -15,14 +15,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3000;
+const PRODUCTION_URL = process.env.PRODUCTION_URL || "";
 
 app.get("/", (req: Request, res: Response) => {
   res.status(httpStatus.OK).send({
     message:
       "Welcome to the DLVR API! Use the appropriate endpoints to access the resources.",
     documentation: `API Documentation available at ${
-      process.env.NODE_ENV === "development" ? `http://localhost:${PORT}` : ""
-    }/api/docs`,
+      process.env.NODE_ENV === "development"
+        ? `http://localhost:${PORT}/api/docs`
+        : PRODUCTION_URL
+          ? `${PRODUCTION_URL}/api/docs`
+          : "/api/docs"
+    }`,
   });
 });
 
@@ -36,12 +41,14 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${PORT}`,
-        description: "Development Server",
-      },
-      {
-        url: "https://dlvr.koyeb.app",
-        description: "Production Server",
+        url:
+          process.env.NODE_ENV === "development"
+            ? `http://localhost:${PORT}`
+            : PRODUCTION_URL,
+        description:
+          process.env.NODE_ENV === "development"
+            ? "Development Server"
+            : "Production Server",
       },
     ],
   },
@@ -65,15 +72,19 @@ export const startServer = async () => {
         `Server is running on ${
           process.env.NODE_ENV === "development"
             ? `http://localhost:${PORT}`
-            : `port ${PORT}`
+            : PRODUCTION_URL
+              ? `${PRODUCTION_URL}`
+              : `port ${PORT}`
         } in ${process.env.NODE_ENV} mode`,
       );
       console.log(
         `API Documentation available at ${
           process.env.NODE_ENV === "development"
-            ? `http://localhost:${PORT}`
-            : ""
-        }/api/docs`,
+            ? `http://localhost:${PORT}/api/docs`
+            : PRODUCTION_URL
+              ? `${PRODUCTION_URL}/api/docs`
+              : "/api/docs"
+        }`,
       );
     });
 
