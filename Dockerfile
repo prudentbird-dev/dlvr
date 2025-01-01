@@ -30,8 +30,5 @@ COPY --from=builder /app/dist ./dist
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
 
-# Expose the default port
-EXPOSE 3000
-
 # Run the application
 CMD ["node", "dist/server.js"]
