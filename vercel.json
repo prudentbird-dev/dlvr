@@ -1,9 +1,15 @@
 {
     "version": 2,
+    "builds": [
+      {
+        "src": "Dockerfile"
+      }
+    ],
     "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/dist/server.js"
-        }
+      {
+        "src": "/(.*)",
+        "dest": "/dist/server.js"
+      }
     ]
-}
+  }
+  
