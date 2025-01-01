@@ -54,7 +54,7 @@ const swaggerOptions = {
   },
   apis:
     process.env.NODE_ENV === "production"
-      ? ["./routes/*.js", "./models/*.js"]
+      ? ["./dist/routes/*.js", "./dist/models/*.js"]
       : ["./src/routes/*.ts", "./src/models/*.ts"],
 };
 
