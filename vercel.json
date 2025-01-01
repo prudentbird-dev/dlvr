@@ -1,15 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "Dockerfile",
-      "use": "@vercel/build-utils/docker"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/dist/server.js"
-    }
-  ]
+    "version": 2,
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/dist/server.js"
+        }
+    ]
 }
